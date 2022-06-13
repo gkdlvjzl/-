@@ -1,0 +1,28 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Test_Roller : MonoBehaviour
+{
+    public GameObject[] movePoint;
+
+    [SerializeField] int index;
+    [SerializeField] float speed;
+    
+
+    void Update()
+    {
+        var nextCos = Vector3.Distance(transform.position, movePoint[index].transform.position);
+
+        if(nextCos < 0.5f)
+        {
+            index++;
+        }
+
+        float step = speed * Time.deltaTime;
+        transform.LookAt(movePoint[index].transform.position);
+        transform.position = Vector3.MoveTowards(transform.position, movePoint[index].transform.position, step);
+        //Vector3.Lerp 첫스타트가 부드럽게 출발하는데 이걸로 조정해야할까?
+        
+    }
+}
