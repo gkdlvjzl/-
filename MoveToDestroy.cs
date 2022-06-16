@@ -19,9 +19,9 @@ public class MoveToDestroy : MonoBehaviour
             Destroy(gameObject);
         }
         else
-        {
-            Loop();
+        {            
             FollowTarget();
+            Loop();
         }
 
     }
