@@ -1,0 +1,93 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MoveStopIdle : MonoBehaviour
+{
+    [SerializeField] GameObject moveStart;
+    [SerializeField] GameObject IdlePoint;
+    [SerializeField] GameObject moveEnd;
+
+    Animator animator;
+    public int speed;
+    public float retrunTime;
+    public float TunSpeed;
+
+    bool A = true;
+
+    private int speedvol;
+    void Start()
+    {
+        speedvol = speed;
+        animator = GetComponent<Animator>();
+        InvokeRepeating("Atrue", 2f, retrunTime);
+    }
+
+    void Update()
+    {
+        Move();
+        MoveEnd();
+    }
+
+    private void Move()
+    {
+        //animator.SetBool("isWalking", true);
+        float StartCos = Vector3.Distance(transform.position, moveStart.transform.position);
+
+        float step = speed * Time.deltaTime;
+
+        if (StartCos >= 1f && A)
+        {
+            FollowTarget(moveStart);
+            transform.position = Vector3.MoveTowards(transform.position, moveStart.transform.position, step);
+        }
+    }
+    private void MoveEnd()
+    {
+        //animator.SetBool("isWalking", true);
+        float EndCos = Vector3.Distance(transform.position, moveEnd.transform.position);
+
+        float step = speed * Time.deltaTime;
+
+        if (EndCos >= 1 && !A)
+        {
+            FollowTarget(moveEnd);
+            transform.position = Vector3.MoveTowards(transform.position, moveEnd.transform.position, step);
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject == IdlePoint)
+        {
+            Invoke("Idle", 2f); //5f
+        }
+    }
+    private void Idle()
+    {        
+        animator.SetBool("isWalking", false);
+        speed = 0;
+    }
+
+    private void FollowTarget(GameObject STED)
+    {
+        if (STED != null)
+        {
+            Vector3 dir = STED.transform.position - this.transform.position;
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * TunSpeed);
+            // 맨뒤 스피드값 값에 따라 회전값조종가능
+        }
+    }
+    private void Atrue()
+    {
+        animator.SetBool("isWalking", true);
+        speed = speedvol;
+        if (A)
+        {
+            A = false;
+        }
+        else
+        {
+            A = true;
+        }
+    }
+}
